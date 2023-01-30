@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+
 class JavaNativeEncryptionServicesEncryptionTestCases {
 
-    @Autowired
-    lateinit var encryptionService: JavaNativeEncryptionServices
+
+    val encryptionService: JavaNativeEncryptionServices = JavaNativeEncryptionServices()
 
 
     private val data : String = "Hello, this is a spring boot web application"

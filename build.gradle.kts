@@ -36,9 +36,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE")
-    //implementation(project(path = "BookStoreAPI:user-management-service"))
-    //implementation(project(":book-ordering-management-service"))
-    //implementation(project(path = ":book-management-service"))
+    implementation(project("user-management-service"))
 }
 
 tasks.withType<KotlinCompile> {

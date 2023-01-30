@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+	id("java")
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
 	kotlin("jvm") version "1.7.22"
@@ -17,7 +18,9 @@ configurations {
 	}
 }
 
-
+repositories {
+	mavenCentral()
+}
 
 
 dependencies {

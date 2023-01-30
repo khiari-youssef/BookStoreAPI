@@ -1,5 +1,7 @@
-package com.example.usermanagementservice.infrastructure.security
+package com.example.usermanagementservice.infrastructure.security.encryption
 
+import com.example.usermanagementservice.infrastructure.security.keyManagement.JavaNativeKeyGenerators
+import com.example.usermanagementservice.infrastructure.security.keyManagement.KeyGenerationService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -7,14 +9,14 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
 
 class JavaNativeEncryptionServicesEncryptionTestCases {
 
 
-    val encryptionService: JavaNativeEncryptionServices = JavaNativeEncryptionServices()
+    private val encryptionService: JavaNativeEncryptionServices = JavaNativeEncryptionServices()
+
+    private val keyGenerationService : KeyGenerationService = JavaNativeKeyGenerators()
 
 
     private val data : String = "Hello, this is a spring boot web application"
@@ -30,7 +32,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     fun secretKeyGenerationTestingSuccessCase() = runTest {
         Assertions.assertDoesNotThrow {
             launch {
-                encryptionService.generateSecretKey()
+                keyGenerationService.generateSecretKey()
             }
         }
         advanceUntilIdle()
@@ -42,7 +44,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     fun passwordBasedSecretKeyGenerationTestingSuccessCase() = runTest {
         Assertions.assertDoesNotThrow {
             launch {
-                encryptionService.generateSecretKey(
+                keyGenerationService.generateSecretKey(
                     password,
                     salt
                 )
@@ -55,7 +57,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun symmetricPlainTextEncryptionTestingSuccessCase() = runTest {
-       val secret = encryptionService.generateSecretKey()
+       val secret = keyGenerationService.generateSecretKey()
         Assertions.assertDoesNotThrow{
            launch {
               encryptionService.encrypt(data.toByteArray(),secret)
@@ -68,7 +70,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun symmetricBase64EncodedPlainTextEncryptionTestingSuccessCase() = runTest {
-       val secret = encryptionService.generateSecretKey()
+       val secret = keyGenerationService.generateSecretKey()
         Assertions.assertDoesNotThrow{
            launch {
               encryptionService.encrypt(data.toByteArray(),secret,true)
@@ -82,7 +84,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun symmetricDecryptionToPlainTextTestingSuccessCase() = runTest {
-       val secret = encryptionService.generateSecretKey()
+       val secret = keyGenerationService.generateSecretKey()
         Assertions.assertDoesNotThrow{
            launch {
               val encryptedData = encryptionService.encrypt(data.toByteArray(Charsets.UTF_8),secret)
@@ -102,7 +104,7 @@ class JavaNativeEncryptionServicesEncryptionTestCases {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun symmetricDecryptionToBase64TestingSuccessCase() = runTest {
-       val secret = encryptionService.generateSecretKey()
+       val secret = keyGenerationService.generateSecretKey()
         Assertions.assertDoesNotThrow{
            launch {
               val encryptedData = encryptionService.encrypt(data.toByteArray(Charsets.UTF_8),secret,true)

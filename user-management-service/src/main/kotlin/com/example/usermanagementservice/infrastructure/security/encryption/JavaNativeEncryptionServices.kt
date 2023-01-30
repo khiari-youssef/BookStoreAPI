@@ -1,4 +1,4 @@
-package com.example.usermanagementservice.infrastructure.security
+package com.example.usermanagementservice.infrastructure.security.encryption
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,24 +17,11 @@ import javax.crypto.spec.SecretKeySpec
 
 
 @Service
-class JavaNativeEncryptionServices : EncryptionServices{
+class JavaNativeEncryptionServices : EncryptionServices {
 
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default
 
-    private val symmetyricEncryptionAlgorithm: String = "AES"
-
-
-
-    override suspend fun generateSecretKey(): SecretKey = withContext(Dispatchers.Default) {
-        KeyGenerator.getInstance(symmetyricEncryptionAlgorithm).generateKey()
-    }
-
-    @Throws(NoSuchAlgorithmException::class, InvalidKeySpecException::class)
-    override suspend fun generateSecretKey(password: String, salt: String): SecretKey = withContext(coroutineDispatcher) {
-        val factory: SecretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val spec: KeySpec = PBEKeySpec(password.toCharArray(), salt.toByteArray(), 1000, 256)
-        SecretKeySpec(factory.generateSecret(spec).encoded, symmetyricEncryptionAlgorithm)
-    }
+    private val symmetricEncryptionAlgorithm: String = "AES"
 
 
     override suspend fun encrypt(
@@ -42,7 +29,7 @@ class JavaNativeEncryptionServices : EncryptionServices{
         secretKey: SecretKey,
         encodeBase64: Boolean
     ): ByteArray = withContext(coroutineDispatcher) {
-        val cipher = Cipher.getInstance("AES")
+        val cipher = Cipher.getInstance(symmetricEncryptionAlgorithm)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         cipher.doFinal( if(encodeBase64) Base64.getEncoder().encode(inputData) else inputData)
     }
@@ -53,7 +40,7 @@ class JavaNativeEncryptionServices : EncryptionServices{
         secretKey: SecretKey,
         decodeBase64: Boolean
     ): ByteArray = withContext(coroutineDispatcher) {
-        val cipher = Cipher.getInstance("AES")
+        val cipher = Cipher.getInstance(symmetricEncryptionAlgorithm)
         cipher.init(Cipher.DECRYPT_MODE, secretKey)
         val decryptedData = cipher.doFinal(encryptedData)
         try {

@@ -1,7 +1,6 @@
 package com.example.usermanagementservice.infrastructure.dependencies
 
 import com.example.usermanagementservice.UserManagementServiceApplication
-import com.example.usermanagementservice.infrastructure.security.EncryptionServices
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory

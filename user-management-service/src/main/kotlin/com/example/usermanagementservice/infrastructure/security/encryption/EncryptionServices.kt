@@ -1,4 +1,4 @@
-package com.example.usermanagementservice.infrastructure.security
+package com.example.usermanagementservice.infrastructure.security.encryption
 
 import javax.crypto.SecretKey
 
@@ -10,22 +10,7 @@ import javax.crypto.SecretKey
 interface EncryptionServices {
 
 
-    /**
-     * randomly generates a private key for AES symmetric encryption
-     * @author Khiari Youssef
-     * @since 27/01/2023
-     */
-    suspend fun generateSecretKey(): SecretKey
 
-
-    /**
-     * generates a secret for AES encryption based on a given password and salt using a password-based key derivation function internally
-     * @author Khiari Youssef
-     * @param password : password to encrypt the key
-     * @param salt : salt to enhance the hashing algorithm's security against brute force attacks
-     * @since 27/01/2023
-     */
-    suspend fun generateSecretKey(password: String, salt: String): SecretKey
 
     /**
      * encrypts plain text data using aes algorithm using a secret key (and base64 encoding if specified)

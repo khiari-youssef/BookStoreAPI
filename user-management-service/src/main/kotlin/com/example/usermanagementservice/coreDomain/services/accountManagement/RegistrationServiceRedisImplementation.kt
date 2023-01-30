@@ -18,8 +18,7 @@ class RegistrationServiceRedisImplementation constructor(
             throw DomainException.RegistrationException("cannot register user with no data")
         } else repository.saveUser(domainUser)
     }
-        .catch { ex->
-
+        .catch {
            throw DomainException.RegistrationException("could not save user")
         }
         .flowOn(Dispatchers.IO)

@@ -37,6 +37,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE")
+	implementation("com.auth0:auth0-spring-security-api:1.5.2")
 	testImplementation("org.junit.platform:junit-platform-suite-engine:1.8.1")
 }
 

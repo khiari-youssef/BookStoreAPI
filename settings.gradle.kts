@@ -1,4 +1,4 @@
 rootProject.name = "BookStoreAPI"
 
 include("user-management-service")
-include("TestModule")
+include("books-management-service")

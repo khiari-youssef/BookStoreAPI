@@ -2,8 +2,7 @@ package com.example.usermanagementservice.application.controllers
 
 
 import com.example.usermanagementservice.application.payloads.AuthPayload
-import com.example.usermanagementservice.application.payloads.RegistrationPayload
-import com.example.usermanagementservice.coreDomain.entities.DomainUser
+import com.example.usermanagementservice.coreDomain.entities.BookUser
 import com.example.usermanagementservice.coreDomain.services.accountManagement.RegistrationService
 import com.example.usermanagementservice.coreDomain.services.authentification.AuthentificationService
 import kotlinx.coroutines.*
@@ -39,14 +38,15 @@ class UserAuthController @Autowired constructor(
     @PostMapping("user/login/credentials")
     suspend fun handleUserAuthentification(
         @RequestBody authCredentialsPayload: AuthPayload?
-    ): Flow<ResponseEntity<Boolean>> = authentificationService.authenticateUser(authCredentialsPayload)
+    ): Flow<ResponseEntity<Boolean>> = authentificationService
+        .authenticateUser(authCredentialsPayload)
         .handleAuthentificationServiceResponseResult()
 
 
     @PostMapping("user/signup")
     suspend fun handleUserRegistration(
-        @RequestBody authCredentialsPayload: RegistrationPayload?
-    ): Flow<ResponseEntity<DomainUser>> = registrationService.registerUser(authCredentialsPayload?.user)
+        @RequestBody bookUser: BookUser?
+    ): Flow<ResponseEntity<BookUser>> = registrationService.registerUser(bookUser)
         .handleRegistrationServiceResponseResult()
 
 

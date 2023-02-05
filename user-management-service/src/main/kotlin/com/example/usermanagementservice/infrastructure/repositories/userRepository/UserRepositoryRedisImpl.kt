@@ -1,21 +1,26 @@
 package com.example.usermanagementservice.infrastructure.repositories.userRepository
 
 import com.example.usermanagementservice.coreDomain.ExternalToDomainEntityMapper
-import com.example.usermanagementservice.coreDomain.entities.DomainUser
+import com.example.usermanagementservice.coreDomain.entities.BookUser
 import com.example.usermanagementservice.coreDomain.mapToDomain
 import com.example.usermanagementservice.coreDomain.repositoryContracts.UserRepositoryContract
-import com.example.usermanagementservice.infrastructure.dto.RedisDTOUser
+import com.example.usermanagementservice.infrastructure.dto.RedisBookUserDTO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.json.JsonParserFactory
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.time.Duration
 
 @Repository
 class UserRepositoryRedisImpl @Autowired constructor(
-    private val userRepositoryRedisDTOmapper: ExternalToDomainEntityMapper<RedisDTOUser, DomainUser>,
+    private val userRepositoryRedisDTOmapper: ExternalToDomainEntityMapper<RedisBookUserDTO, BookUser>,
     private val redis: RedisTemplate<String, Any>
 ) : UserRepositoryContract {
 
@@ -23,22 +28,28 @@ class UserRepositoryRedisImpl @Autowired constructor(
         private const val USER_REDIS_KEY : String = "user:redis:key"
     }
 
-    override fun getUser(): Flow<DomainUser> = flow {
-        emit(redis.opsForValue().get(USER_REDIS_KEY) as RedisDTOUser?)
+    override fun getUser(): Flow<BookUser> = flow {
+        emit(redis.opsForValue().get(USER_REDIS_KEY) as RedisBookUserDTO?)
     }
         .map { dto->
           dto ?: throw NullPointerException()
         }
         .mapToDomain(mapper = userRepositoryRedisDTOmapper)
 
-    override suspend fun saveUser(domainUser: DomainUser) : DomainUser {
+    override suspend fun saveUser(bookUser: BookUser) : BookUser {
+        val jsonSerializedUser = Json.encodeToString(
+            userRepositoryRedisDTOmapper.fromDomain(bookUser)
+        )
         redis.opsForValue().set(
             USER_REDIS_KEY,
-            userRepositoryRedisDTOmapper.fromDomain(domainUser)
+            jsonSerializedUser
         )
         redis.expire(USER_REDIS_KEY, Duration.ofSeconds(20))
-        return userRepositoryRedisDTOmapper.toDomain(redis.opsForValue().get("user") as RedisDTOUser)
+
+        return userRepositoryRedisDTOmapper.toDomain(Json.decodeFromString<RedisBookUserDTO>((redis.opsForValue().get(USER_REDIS_KEY) as String)))
     }
+
+
 
 
 }

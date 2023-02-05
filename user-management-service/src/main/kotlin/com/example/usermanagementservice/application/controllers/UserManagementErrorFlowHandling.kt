@@ -1,7 +1,7 @@
 package com.example.usermanagementservice.application.controllers
 
 import com.example.usermanagementservice.coreDomain.DomainException
-import com.example.usermanagementservice.coreDomain.entities.DomainUser
+import com.example.usermanagementservice.coreDomain.entities.BookUser
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -49,13 +49,13 @@ fun Flow<Boolean>.handleAuthentificationServiceResponseResult(): Flow<ResponseEn
         }
 
 
-fun Flow<DomainUser?>.handleRegistrationServiceResponseResult(): Flow<ResponseEntity<DomainUser>> =
+fun Flow<BookUser?>.handleRegistrationServiceResponseResult(): Flow<ResponseEntity<BookUser>> =
     map {
         ResponseEntity.ok(it)
     }
     .catch { ex ->
             ex.printStackTrace()
-            val badRequest = ResponseEntity.badRequest().build<DomainUser>()
+            val badRequest = ResponseEntity.badRequest().build<BookUser>()
             emit(
                 if (ex is DomainException) {
                     when (ex) {

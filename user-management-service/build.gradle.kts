@@ -6,6 +6,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.0"
 	kotlin("jvm") version "1.7.22"
 	kotlin("plugin.spring") version "1.7.22"
+	kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "com.example"
@@ -39,6 +40,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE")
 	implementation("com.auth0:auth0-spring-security-api:1.5.2")
 	testImplementation("org.junit.platform:junit-platform-suite-engine:1.8.1")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
 }
 
 tasks.withType<KotlinCompile> {

@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Scope
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.web.SecurityFilterChain
+
 
 @Import(
     RedisConfigurationProvider::class,
@@ -20,6 +23,18 @@ class AppConfigurationProvider {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Bean
     fun provideLog4jLogger(): Logger = LoggerFactory.getLogger(UserManagementServiceApplication::class.java)
+
+    @Bean
+    fun  filterChain( http : HttpSecurity) : SecurityFilterChain =
+        http.csrf()
+            .disable()
+            .authorizeHttpRequests()
+            .anyRequest()
+            .permitAll()
+            .and()
+            .build()
+
+
 
 
 

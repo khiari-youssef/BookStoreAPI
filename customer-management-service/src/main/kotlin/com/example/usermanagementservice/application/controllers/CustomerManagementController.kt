@@ -20,10 +20,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.*
 
 
-@ControllerAdvice
+@ControllerAdvice()
 class UserAuthExceptionHandler() : ResponseEntityExceptionHandler() {
 
-    @ExceptionHandler(value = [RuntimeException::class, DomainException::class])
+    @ExceptionHandler
     fun handleException(ex: RuntimeException, request: WebRequest) : ResponseEntity<Any>  {
         ex.printStackTrace()
         return handleRequestFailures(ex)
@@ -50,10 +50,16 @@ class BookCustomerAuthController @Autowired constructor(
     @PostMapping("${CustomerManagementRoutes.ROOT}/${CustomerManagementRoutes.VERSIONNING_NAME}/signup")
     suspend fun handleCustomerRegistration(
         @RequestBody bookCustomer: CustomerRegistrationRestPayload?
-    ): Flow<ResponseEntity<BookCustomer>> =
-          registrationService
-         .registerUser(customerPayloadMapper.toDomain(bookCustomer!!))
-        .buildSuccessResponse()
-        .handleRequestFlowFailures()
+    ): Flow<ResponseEntity<BookCustomer>> = try {
+       val domainUserEntity =  customerPayloadMapper.toDomain(bookCustomer!!)
+             registrationService
+            .registerUser(domainUserEntity)
+            .buildSuccessResponse()
+            .handleRequestFlowFailures()
+    } catch (ex: Exception){
+       ex.printStackTrace()
+      flowOf(handleRequestFailures(ex))
+    }
+
 
 }

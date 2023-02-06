@@ -3,7 +3,9 @@ package com.example.usermanagementservice.application.controllers
 import com.example.usermanagementservice.coreDomain.DomainException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 
@@ -19,24 +21,13 @@ fun <T> handleRequestFailures(throwable: Throwable) : ResponseEntity<T>{
     return if (throwable is DomainException) {
         when (throwable) {
             is DomainException.UnauthorizedDomainException -> {
-                ResponseEntity.of(
-                    ProblemDetail
-                        .forStatus(401)
-                        .apply {
-                            title = "Unauthorized"
-                            detail = "Unauthorized access !"
-                        }
-                ).build()
+                ResponseEntity
+                    .status(401)
+                    .build()
             }
 
             is DomainException.AuthentificationDomainException -> {
-                ResponseEntity.of(
-                    ProblemDetail.forStatus(401)
-                        .apply {
-                            title = "Authentification failed"
-                            detail = "invalid credentials or token "
-                        }
-                ).build()
+                ResponseEntity.status(401).build()
             }
 
             is DomainException.InternalErrorDomainException -> {
@@ -51,14 +42,9 @@ fun <T> handleRequestFailures(throwable: Throwable) : ResponseEntity<T>{
                 ResponseEntity.badRequest().build()
             }
             is DomainException.DomainDateTimeException ->{
-                ResponseEntity.of(
-                    ProblemDetail
-                        .forStatus(400)
-                        .apply {
-                            title = "Malformatted request ! "
-                            detail = throwable.message
-                        }
-                ).build()
+                ResponseEntity
+                    .badRequest()
+                    .build()
             }
         }
     } else badRequest

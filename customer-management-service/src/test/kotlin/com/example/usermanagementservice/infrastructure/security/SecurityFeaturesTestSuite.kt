@@ -4,7 +4,6 @@ import com.example.usermanagementservice.infrastructure.security.encryption.Java
 import com.example.usermanagementservice.infrastructure.security.integrity.JavaNativeDataIntegrityServiceTestingCases
 import com.example.usermanagementservice.infrastructure.security.keyManagement.KeyGeneratorsTestCases
 import org.junit.platform.suite.api.SelectClasses
-import org.junit.platform.suite.api.SelectPackages
 import org.junit.platform.suite.api.Suite
 import org.junit.platform.suite.api.SuiteDisplayName
 

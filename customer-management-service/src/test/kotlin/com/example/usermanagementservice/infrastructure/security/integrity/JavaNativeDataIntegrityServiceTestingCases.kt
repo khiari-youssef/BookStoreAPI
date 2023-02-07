@@ -1,7 +1,9 @@
 package com.example.usermanagementservice.infrastructure.security.integrity
 
-import com.example.usermanagementservice.infrastructure.security.keyManagement.JavaNativeKeyGenerators
-import com.example.usermanagementservice.infrastructure.security.keyManagement.KeyGenerationService
+
+import com.example.customermanagementservice.infrastructure.security.integrity.JavaNativeDataIntegrityService
+import com.example.customermanagementservice.infrastructure.security.keyManagement.JavaNativeKeyGenerators
+import com.example.customermanagementservice.infrastructure.security.keyManagement.KeyGenerationService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions

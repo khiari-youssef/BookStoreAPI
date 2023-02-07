@@ -25,7 +25,6 @@ repositories {
 
 
 dependencies {
-
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.1.6.RELEASE")
@@ -39,8 +38,13 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE")
 	implementation("com.auth0:auth0-spring-security-api:1.5.2")
+	implementation("org.springframework.data:spring-data-jpa:3.0.1")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly("mysql:mysql-connector-java:8.0.32")
 	testImplementation("org.junit.platform:junit-platform-suite-engine:1.8.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
+	implementation("com.h2database:h2:2.1.214")
+
 }
 
 tasks.withType<KotlinCompile> {

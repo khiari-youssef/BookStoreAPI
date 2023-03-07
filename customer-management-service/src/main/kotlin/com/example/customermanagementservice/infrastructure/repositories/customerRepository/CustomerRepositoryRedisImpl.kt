@@ -2,9 +2,10 @@ package com.example.customermanagementservice.infrastructure.repositories.custom
 
 import com.example.customermanagementservice.coreDomain.ExternalToDomainEntityMapper
 import com.example.customermanagementservice.coreDomain.entities.BookCustomer
+import com.example.customermanagementservice.coreDomain.entities.CustomerLoginCredentials
 import com.example.customermanagementservice.coreDomain.mapToDomain
 import com.example.customermanagementservice.coreDomain.repositoryContracts.CustomerRepositoryContract
-import com.example.customermanagementservice.infrastructure.dto.redis.RedisBookUserDTO
+import com.example.customermanagementservice.infrastructure.dto.redis.RedisBookCustomerDTO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -18,7 +19,7 @@ import java.time.Duration
 
 @Repository("RedisImpl")
 class CustomerRepositoryRedisImpl @Autowired constructor(
-    private val userRepositoryRedisDTOmapper: ExternalToDomainEntityMapper<RedisBookUserDTO, BookCustomer>,
+    private val userRepositoryRedisDTOmapper: ExternalToDomainEntityMapper<RedisBookCustomerDTO, BookCustomer>,
     private val redis: RedisTemplate<String, Any>
 ) : CustomerRepositoryContract {
 
@@ -26,15 +27,24 @@ class CustomerRepositoryRedisImpl @Autowired constructor(
         private const val USER_REDIS_KEY : String = "user:redis:key"
     }
 
-    override fun getUser(): Flow<BookCustomer> = flow {
-        emit(redis.opsForValue().get(USER_REDIS_KEY) as RedisBookUserDTO?)
+    override fun findCustomerByID(customerID: String): Flow<BookCustomer> = flow {
+        emit(redis.opsForValue().get(USER_REDIS_KEY) as RedisBookCustomerDTO?)
     }
-        .map { dto->
+    .map { dto->
           dto ?: throw NullPointerException()
-        }
-        .mapToDomain(mapper = userRepositoryRedisDTOmapper)
+    }.mapToDomain(mapper = userRepositoryRedisDTOmapper)
 
-    override suspend fun saveUser(bookCustomer: BookCustomer) : BookCustomer {
+    override fun checkUserCredentialsValidity(loginCredentials: CustomerLoginCredentials?): Flow<Boolean> = flow {
+        emit(
+            loginCredentials?.run {
+                val cachedCustomer : RedisBookCustomerDTO? = redis.opsForValue().get(USER_REDIS_KEY) as RedisBookCustomerDTO?
+                val isLoggedIn = cachedCustomer?.email == loginCredentials.email && cachedCustomer.password == loginCredentials.password
+                isLoggedIn
+            } ?: false
+        )
+    }
+
+    override suspend fun saveCustomer(bookCustomer: BookCustomer) : BookCustomer {
         val jsonSerializedUser = Json.encodeToString(
             userRepositoryRedisDTOmapper.fromDomain(bookCustomer)
         )
@@ -44,7 +54,7 @@ class CustomerRepositoryRedisImpl @Autowired constructor(
         )
         redis.expire(USER_REDIS_KEY, Duration.ofSeconds(20))
 
-        return userRepositoryRedisDTOmapper.toDomain(Json.decodeFromString<RedisBookUserDTO>((redis.opsForValue().get(USER_REDIS_KEY) as String)))
+        return userRepositoryRedisDTOmapper.toDomain(Json.decodeFromString<RedisBookCustomerDTO>((redis.opsForValue().get(USER_REDIS_KEY) as String)))
     }
 
 

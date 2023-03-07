@@ -7,7 +7,7 @@ import com.example.customermanagementservice.application.payloads.CustomerRegist
 import com.example.customermanagementservice.coreDomain.ExternalToDomainEntityMapper
 import com.example.customermanagementservice.coreDomain.entities.BookCustomer
 import com.example.customermanagementservice.coreDomain.services.accountManagement.RegistrationService
-import com.example.customermanagementservice.coreDomain.services.authentification.AuthentificationService
+import com.example.customermanagementservice.coreDomain.services.authentification.AuthenticationService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +33,7 @@ class UserAuthExceptionHandler() : ResponseEntityExceptionHandler() {
 
 @RestController
 class BookCustomerAuthController @Autowired constructor(
-    @Qualifier("RedisAuthService") private val authentificationService: AuthentificationService,
+    @Qualifier("RedisAuthService") private val authenticationService: AuthenticationService,
     @Qualifier("RedisRegistrationService") private val registrationService: RegistrationService,
     private val customerPayloadMapper : ExternalToDomainEntityMapper<CustomerRegistrationRestPayload, BookCustomer>
 ) {
@@ -41,8 +41,8 @@ class BookCustomerAuthController @Autowired constructor(
     @PostMapping("${CustomerManagementRoutes.ROOT}/${CustomerManagementRoutes.VERSIONNING_NAME}/login/credentials")
     suspend fun handleCustomerAuthentification(
         @RequestBody authCredentialsPayload: AuthPayload?
-    ): Flow<ResponseEntity<Boolean>> = authentificationService
-        .authenticateCustomer(authCredentialsPayload)
+    ): Flow<ResponseEntity<Boolean>> = authenticationService
+        .authenticateCustomer(authCredentialsPayload?.asDomainCredentials())
         .buildSuccessResponse()
         .handleRequestFlowFailures()
 

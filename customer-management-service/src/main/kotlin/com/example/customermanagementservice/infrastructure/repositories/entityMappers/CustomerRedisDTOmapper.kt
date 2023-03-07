@@ -1,19 +1,19 @@
-package com.example.customermanagementservice.infrastructure.repositories.customerRepository
+package com.example.customermanagementservice.infrastructure.repositories.entityMappers
 
 import com.example.customermanagementservice.coreDomain.DomainException
 import com.example.customermanagementservice.coreDomain.ExternalToDomainEntityMapper
 import com.example.customermanagementservice.coreDomain.entities.*
-import com.example.customermanagementservice.infrastructure.dto.redis.RedisBookUserDTO
+import com.example.customermanagementservice.infrastructure.dto.redis.RedisBookCustomerDTO
 import com.example.customermanagementservice.infrastructure.dto.redis.RedisLocation
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class UserRepositoryRedisDTOMapper : ExternalToDomainEntityMapper<RedisBookUserDTO, BookCustomer> {
+class UserRepositoryRedisDTOMapper : ExternalToDomainEntityMapper<RedisBookCustomerDTO, BookCustomer> {
 
     private val dateFormatter = DateTimeFormatter.ISO_DATE
 
-    override fun fromDomain(domainObject: BookCustomer): RedisBookUserDTO = RedisBookUserDTO(
+    override fun fromDomain(domainObject: BookCustomer): RedisBookCustomerDTO = RedisBookCustomerDTO(
         id = domainObject.id,
         firstName = domainObject.profile.firstName,
         lastName = domainObject.profile.lastName,
@@ -36,7 +36,7 @@ class UserRepositoryRedisDTOMapper : ExternalToDomainEntityMapper<RedisBookUserD
         phoneNumber = domainObject.profile.phoneNumber
     )
 
-    override fun toDomain(externalObject: RedisBookUserDTO): BookCustomer = BookCustomer(
+    override fun toDomain(externalObject: RedisBookCustomerDTO): BookCustomer = BookCustomer(
         id = externalObject.id,
         loginCredentials = CustomerLoginCredentials(
             email = externalObject.email,

@@ -10,7 +10,7 @@ data class RedisLocation(
 ) : Serializable
 
 @kotlinx.serialization.Serializable
-data class RedisBookUserDTO(
+data class RedisBookCustomerDTO(
     val id : String,
     val email : String,
     val password : String,

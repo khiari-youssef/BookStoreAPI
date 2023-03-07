@@ -5,8 +5,8 @@ import com.example.customermanagementservice.coreDomain.services.DomainPasswordE
 import com.example.customermanagementservice.coreDomain.services.PasswordEncodingManager
 import com.example.customermanagementservice.coreDomain.services.accountManagement.RegistrationService
 import com.example.customermanagementservice.coreDomain.services.accountManagement.RegistrationServiceRedisImplementation
-import com.example.customermanagementservice.coreDomain.services.authentification.AuthentificationService
-import com.example.customermanagementservice.coreDomain.services.authentification.AuthentificationServiceRedisImplementation
+import com.example.customermanagementservice.coreDomain.services.authentification.AuthenticationService
+import com.example.customermanagementservice.coreDomain.services.authentification.AuthenticationServiceRedisImplementation
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Bean
@@ -33,13 +33,16 @@ fun provideDomainPasswordEncodingService(
 fun  provideRedisAuthServiceImpl(
         @Qualifier("RedisImpl")   repository: CustomerRepositoryContract,
         domainPasswordEncodingService: DomainPasswordEncodingService
-) : AuthentificationService = AuthentificationServiceRedisImplementation(repository,domainPasswordEncodingService)
+) : AuthenticationService = AuthenticationServiceRedisImplementation(repository,domainPasswordEncodingService)
 
 @Bean("RedisRegistrationService")
 fun  provideRedisRegistrationServiceImpl(
-    @Qualifier("RedisImpl")  repository: CustomerRepositoryContract,
+    @Qualifier("RedisImpl")  redisRepository: CustomerRepositoryContract,
     domainPasswordEncodingService: DomainPasswordEncodingService
-) : RegistrationService = RegistrationServiceRedisImplementation(repository,domainPasswordEncodingService)
+) : RegistrationService = RegistrationServiceRedisImplementation(
+    redisRepository,
+    domainPasswordEncodingService
+)
 
 
 
